@@ -24,7 +24,7 @@ namespace VeeamTest.Services.Readers
                 File.Read(bytes, 0, bytes.Length);
                 
                 // check extra field bit
-                if ((bytes[3] & 4) == 0)
+                if ((bytes[3] & (byte) GZipFlags.ExtraFieldPresent) == 0)
                 {
                     throw new InvalidOperationException(StringsHelper.EmptyExtraFieldFlag());
                 }

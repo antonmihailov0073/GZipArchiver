@@ -53,9 +53,15 @@ namespace VeeamTest.Collections
             
             try
             {
-                _dequeueSemaphore.Wait(_dequeueCancellationSource.Token);
+                // trying to wait handle immediately
+                var waitSuccessful = _dequeueSemaphore.Wait(0);
+                if (!waitSuccessful)
+                {
+                    // when immediately wait failed, go for infinite with cancellation token to throw when enqueuing was completed
+                    _dequeueSemaphore.Wait(Timeout.Infinite, _dequeueCancellationSource.Token);
+                }
             }
-            catch (OperationCanceledException) // it's mean that enqueuing was completed while we were waiting
+            catch (OperationCanceledException)
             {
                 throw EnqueuingCompletedException();
             }

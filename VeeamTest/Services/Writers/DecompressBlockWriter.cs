@@ -21,7 +21,7 @@ namespace VeeamTest.Services.Writers
             File.Write(block.Data, 0, 3);
                 
             // extra field bit
-            File.Write(new byte[] { 4 });
+            File.Write(new[] { (byte) GZipFlags.ExtraFieldPresent });
                 
             // other required bits
             File.Write(block.Data, 3, 6);
