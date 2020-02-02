@@ -1,5 +1,6 @@
 using System;
 using System.Threading;
+using VeeamTest.Helpers.Strings;
 
 namespace VeeamTest.Collections
 {
@@ -94,7 +95,7 @@ namespace VeeamTest.Collections
         
         private static Exception EnqueuingCompletedException()
         {
-            return new InvalidOperationException("Enqueuing was completed");
+            return new InvalidOperationException(StringsHelper.EnqueuingCompleted());
         }
     }
 }
