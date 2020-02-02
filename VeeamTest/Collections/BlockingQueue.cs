@@ -1,7 +1,5 @@
 using System;
 using System.Threading;
-using VeeamTest.Helpers.Strings;
-using VeeamTest.Threading;
 
 namespace VeeamTest.Collections
 {
@@ -9,11 +7,20 @@ namespace VeeamTest.Collections
     {
         private readonly ThreadSafeQueue<TElement> _internalQueue = new ThreadSafeQueue<TElement>();
         private readonly SemaphoreSlim _dequeueSemaphore = new SemaphoreSlim(0);
-        private readonly SpinBlock _enqueuingCompletedSync = new SpinBlock();
+        private readonly CancellationTokenSource _dequeueCancellationSource = new CancellationTokenSource();
 
         private bool _isDisposed;
-        private bool _isEnqueuingCompleted;
 
+
+        public bool IsEnqueuingCompleted
+        {
+            get
+            {
+                CheckDisposed();
+                
+                return _dequeueCancellationSource.IsCancellationRequested;
+            }
+        }
 
         public bool IsCompleted
         {
@@ -21,8 +28,7 @@ namespace VeeamTest.Collections
             {
                 CheckDisposed();
                 
-                return _enqueuingCompletedSync.GetWithSync(() => _isEnqueuingCompleted) 
-                       && _internalQueue.Count == 0;;
+                return IsEnqueuingCompleted && _dequeueSemaphore.CurrentCount == 0;
             }
         }
         
@@ -41,10 +47,18 @@ namespace VeeamTest.Collections
 
             if (IsCompleted)
             {
-                throw new InvalidOperationException(StringsHelper.EnqueuingCompleted());
+                throw EnqueuingCompletedException();
             }
             
-            _dequeueSemaphore.Wait();
+            try
+            {
+                _dequeueSemaphore.Wait(_dequeueCancellationSource.Token);
+            }
+            catch (OperationCanceledException) // it's mean that enqueuing was completed while we were waiting
+            {
+                throw EnqueuingCompletedException();
+            }
+            
             return _internalQueue.Dequeue();
         }
 
@@ -52,7 +66,7 @@ namespace VeeamTest.Collections
         {
             CheckDisposed();
             
-            _enqueuingCompletedSync.WithSync(() => _isEnqueuingCompleted = true);
+            _dequeueCancellationSource.Cancel();
         }
 
         public void Dispose()
@@ -63,6 +77,7 @@ namespace VeeamTest.Collections
             }
             
             _dequeueSemaphore.Dispose();
+            _dequeueCancellationSource.Dispose();
             
             _isDisposed = true;
         }
@@ -74,6 +89,12 @@ namespace VeeamTest.Collections
             {
                 throw new ObjectDisposedException(GetType().Name);
             }
+        }
+
+        
+        private static Exception EnqueuingCompletedException()
+        {
+            return new InvalidOperationException("Enqueuing was completed");
         }
     }
 }

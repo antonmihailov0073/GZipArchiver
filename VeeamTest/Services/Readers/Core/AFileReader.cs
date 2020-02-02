@@ -18,9 +18,17 @@ namespace VeeamTest.Services.Readers.Core
         protected FileStream File { get; }
         
         
-        public bool CanContinue => File.Position != File.Length;
-        
-        
+        public bool CanContinue
+        {
+            get
+            {
+                CheckDisposed();
+                
+                return File.Position != File.Length;
+            }
+        }
+
+
         public Block ReadNext()
         {
             CheckDisposed();

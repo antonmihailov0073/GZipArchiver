@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using VeeamTest.Threading;
 
@@ -10,9 +9,6 @@ namespace VeeamTest.Collections
         private readonly SpinBlock _sync = new SpinBlock();
 
 
-        public int Count => _sync.GetWithSync(() => _internalQueue.Count);
-        
-        
         public void Enqueue(TElement element)
         {
             _sync.WithSync(() => _internalQueue.Enqueue(element));
