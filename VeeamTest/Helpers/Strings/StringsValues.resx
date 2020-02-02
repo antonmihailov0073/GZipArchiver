@@ -120,6 +120,9 @@
   <data name="EmptyExtraFieldFlag" xml:space="preserve">
     <value>Required extra field flag is empty</value>
   </data>
+  <data name="EnqueuingCompleted" xml:space="preserve">
+    <value>Enqueuing to the queue is completed</value>
+  </data>
   <data name="ExceptionPrefix" xml:space="preserve">
     <value>Exception occured: </value>
   </data>

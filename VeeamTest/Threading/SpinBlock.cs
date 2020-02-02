@@ -1,3 +1,4 @@
+using System;
 using System.Threading;
 
 namespace VeeamTest.Threading
@@ -24,7 +25,7 @@ namespace VeeamTest.Threading
             
             // spin [_spinTimesBeforeBlock] times trying to enter
             var isMonitorEntered = false;
-            for (var i = 0; i < _spinTimesBeforeBlock; ++i)
+            for (var i = 0; i < _spinTimesBeforeBlock && !spinner.NextSpinWillYield; ++i)
             {
                 isMonitorEntered = Monitor.TryEnter(_sync);
                 if (isMonitorEntered)
@@ -44,6 +45,27 @@ namespace VeeamTest.Threading
         public void Exit()
         {
             Monitor.Exit(_sync);
+        }
+        
+        public void WithSync(Action action)
+        {
+            Enter();
+
+            try
+            {
+                action.Invoke();
+            }
+            finally
+            {
+                Exit();
+            }
+        }
+
+        public TResult GetWithSync<TResult>(Func<TResult> getFunction)
+        {
+            var result = default(TResult);
+            WithSync(() => result = getFunction.Invoke());
+            return result; 
         }
     }
 }

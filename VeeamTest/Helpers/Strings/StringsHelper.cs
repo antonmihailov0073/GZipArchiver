@@ -43,5 +43,10 @@ namespace VeeamTest.Helpers.Strings
         {
             return StringsValues.UnsupportedCompressedFile;
         }
+
+        public static string EnqueuingCompleted()
+        {
+            return StringsValues.EnqueuingCompleted;
+        }
     }
 }

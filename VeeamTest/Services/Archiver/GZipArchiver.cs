@@ -10,6 +10,9 @@ namespace VeeamTest.Services.Archiver
 {
     public class GZipArchiver
     {
+        // it's the optimal thread pool size based on my research
+        private static readonly int _threadPoolSize = Environment.ProcessorCount * 2;
+        
         private readonly ArchiverSettings _settings;
         private readonly IArchiverFactory _factory;
 
@@ -27,39 +30,68 @@ namespace VeeamTest.Services.Archiver
                 _factory = new CompressFactory(settings);
             }
         }
-
-
+        
+        
         public void Process()
         {
             var gZip = _factory.CreateGZip();
-            using (var threadPool = new ThreadPool(Environment.ProcessorCount))
+            
+            using (var threadPool = new ThreadPool(_threadPoolSize))
             using (var reader = _factory.CreateReader())
             using (var writer = _factory.CreateWriter())
             {
                 while (reader.CanContinue)
                 {
-                    using (var waitables = new DisposableList<IWaitable<Block>>())
+                    using (var compressQueue = new BlockingQueue<IWaitable<Block>>())
                     {
+                        // schedule a write work
+                        var writeWork = threadPool.ScheduleWork(() =>
+                        {
+                            while (!compressQueue.IsCompleted)
+                            {
+                                IWaitable<Block> work;
+                                try
+                                {
+                                    work = compressQueue.Dequeue();
+                                }
+                                catch 
+                                {
+                                    break;
+                                }
+
+                                try
+                                {
+                                    work.Wait();
+
+                                    writer.WriteNext(work.Result);
+                                }
+                                finally
+                                {
+                                    work.Dispose();
+                                }
+                            }
+                        });
+                        
+                        // read blocks until the memory limitation
                         var readBytes = 0L;
                         while (readBytes < _settings.MemoryLimitation && reader.CanContinue)
                         {
                             var block = reader.ReadNext();
                             readBytes += block.Data.Length;
                             
-                            var waitable = threadPool.ScheduleWork(() =>
+                            // schedule a compress work
+                            var work = threadPool.ScheduleWork(() =>
                             {
                                 gZip.Process(block);
                                 return block;
                             });
-                            waitables.Add(waitable);
+                            compressQueue.Enqueue(work);
                         }
-
-                        foreach (var waitable in waitables)
-                        {
-                            waitable.Wait();
-                        
-                            writer.WriteNext(waitable.Result);
-                        }
+                    
+                        compressQueue.CompleteEnqueuing();
+                    
+                        // wait for write work to complete before continue
+                        writeWork.Wait();
                     }
                 }
             }

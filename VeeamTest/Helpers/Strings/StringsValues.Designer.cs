@@ -22,7 +22,7 @@ namespace VeeamTest.Helpers.Strings {
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "16.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    internal class StringsValues {
+    public class StringsValues {
         
         private static global::System.Resources.ResourceManager resourceMan;
         
@@ -36,7 +36,7 @@ namespace VeeamTest.Helpers.Strings {
         ///   Returns the cached ResourceManager instance used by this class.
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        internal static global::System.Resources.ResourceManager ResourceManager {
+        public static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
                     global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("VeeamTest.Helpers.Strings.StringsValues", typeof(StringsValues).Assembly);
@@ -51,7 +51,7 @@ namespace VeeamTest.Helpers.Strings {
         ///   resource lookups using this strongly typed resource class.
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        internal static global::System.Globalization.CultureInfo Culture {
+        public static global::System.Globalization.CultureInfo Culture {
             get {
                 return resourceCulture;
             }
@@ -63,16 +63,25 @@ namespace VeeamTest.Helpers.Strings {
         /// <summary>
         ///   Looks up a localized string similar to Required extra field flag is empty.
         /// </summary>
-        internal static string EmptyExtraFieldFlag {
+        public static string EmptyExtraFieldFlag {
             get {
                 return ResourceManager.GetString("EmptyExtraFieldFlag", resourceCulture);
             }
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Enqueuing to the queue is completed.
+        /// </summary>
+        public static string EnqueuingCompleted {
+            get {
+                return ResourceManager.GetString("EnqueuingCompleted", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Exception occured: .
         /// </summary>
-        internal static string ExceptionPrefix {
+        public static string ExceptionPrefix {
             get {
                 return ResourceManager.GetString("ExceptionPrefix", resourceCulture);
             }
@@ -81,7 +90,7 @@ namespace VeeamTest.Helpers.Strings {
         /// <summary>
         ///   Looks up a localized string similar to Invalid argument converter type.
         /// </summary>
-        internal static string InvalidConverter {
+        public static string InvalidConverter {
             get {
                 return ResourceManager.GetString("InvalidConverter", resourceCulture);
             }
@@ -90,7 +99,7 @@ namespace VeeamTest.Helpers.Strings {
         /// <summary>
         ///   Looks up a localized string similar to Invalid extra field length.
         /// </summary>
-        internal static string InvalidExtraFieldLength {
+        public static string InvalidExtraFieldLength {
             get {
                 return ResourceManager.GetString("InvalidExtraFieldLength", resourceCulture);
             }
@@ -99,7 +108,7 @@ namespace VeeamTest.Helpers.Strings {
         /// <summary>
         ///   Looks up a localized string similar to Missing required arguments.
         /// </summary>
-        internal static string MissingRequiredArguments {
+        public static string MissingRequiredArguments {
             get {
                 return ResourceManager.GetString("MissingRequiredArguments", resourceCulture);
             }
@@ -108,7 +117,7 @@ namespace VeeamTest.Helpers.Strings {
         /// <summary>
         ///   Looks up a localized string similar to Processed in: .
         /// </summary>
-        internal static string ProcessedPrefix {
+        public static string ProcessedPrefix {
             get {
                 return ResourceManager.GetString("ProcessedPrefix", resourceCulture);
             }
@@ -117,7 +126,7 @@ namespace VeeamTest.Helpers.Strings {
         /// <summary>
         ///   Looks up a localized string similar to Processing started....
         /// </summary>
-        internal static string ProcessStarted {
+        public static string ProcessStarted {
             get {
                 return ResourceManager.GetString("ProcessStarted", resourceCulture);
             }
@@ -126,7 +135,7 @@ namespace VeeamTest.Helpers.Strings {
         /// <summary>
         ///   Looks up a localized string similar to Unsupported compressed file format.
         /// </summary>
-        internal static string UnsupportedCompressedFile {
+        public static string UnsupportedCompressedFile {
             get {
                 return ResourceManager.GetString("UnsupportedCompressedFile", resourceCulture);
             }
